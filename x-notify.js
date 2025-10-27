@@ -139,7 +139,8 @@ class XNotify {
             button.style = `margin-top:10px; padding:5px 10px; border:none; border-radius:5px; background:#fff; color:${this.background}; cursor:pointer; font-weight:bold; font-family:sans-serif;`;
             button.onclick = () => {
                 this.hideNotification(row);
-                if (typeof this.onConfirm === "function") this.onConfirm();
+                if (typeof this.onConfirm === "function")
+                    this.onConfirm();
             };
             notification.appendChild(button);
         }
@@ -149,31 +150,41 @@ class XNotify {
 
     showNotification(element) {
         let container = document.getElementById("x-notify-container");
-        if (!container) return;
-
         let notification = element.getElementsByClassName("x-notification")[0];
 
         if (this.position === "BottomRight" || this.position === "BottomLeft") {
             container.append(element);
-            if (container.scrollHeight > window.innerHeight) container.style.height = "calc(100% - 20px)";
+            if (container.scrollHeight > window.innerHeight) {
+                container.style.height = "calc(100% - 20px)";
+            }
             container.scrollTo(0, container.scrollHeight);
         } else {
             container.prepend(element);
         }
 
+        // Fade-in
         let opacity = 0.05;
         let animation = setInterval(() => {
             opacity += 0.05;
             notification.style.opacity = opacity;
-            if (opacity >= 1) clearInterval(animation);
+            if (opacity >= 1) {
+                notification.style.opacity = 1;
+                clearInterval(animation);
+            }
         }, 10);
 
-        setTimeout(() => this.hideNotification(element), this.duration);
+        // Only auto-hide if no button is present
+        if (!this.withButton) {
+            setTimeout(() => {
+                this.hideNotification(element);
+            }, this.duration);
+        }
     }
 
     hideNotification(element) {
         let container = document.getElementById("x-notify-container");
-        if (!container) return;
+        if (!container)
+            return;
 
         let notification = element.getElementsByClassName("x-notification")[0];
         let opacity = 1;
@@ -186,13 +197,16 @@ class XNotify {
             }
         }, 10);
 
-        if (container.scrollHeight <= window.innerHeight) container.style.height = "auto";
-        if (!container.innerHTML.trim()) container.remove();
+        if (container.scrollHeight <= window.innerHeight)
+            container.style.height = "auto";
+        if (!container.innerHTML.trim())
+            container.remove();
     }
 
     clear() {
         let container = document.getElementById("x-notify-container");
-        if (!container) return;
+        if (!container)
+            return;
         Array.from(container.getElementsByClassName("x-notification")).forEach(el => this.hideNotification(el));
     }
 
@@ -206,7 +220,7 @@ class XNotify {
 
     shuffle(string) {
         let parts = string.toString().split("");
-        for (let i = parts.length; i > 0;) {
+        for (let i = parts.length; i > 0; ) {
             let random = parseInt(Math.random() * i);
             let temp = parts[--i];
             parts[i] = parts[random];
